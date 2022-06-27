@@ -1,0 +1,95 @@
+base:
+- base/yolo.yaml
+preprocessing:
+  input_shape: null
+  meta_arch: mobilenet_ssd_ar
+postprocessing:
+  nms_iou_thresh: 0.3
+  score_threshold: 0.1
+  meta_arch: yolo_v3
+  anchors:
+    strides:
+    - 16
+    - 32
+    - 64
+    sizes:
+    - - 23
+      - 27
+      - 37
+      - 58
+      - 81
+      - 82
+    - - 81
+      - 82
+      - 135
+      - 169
+      - 344
+      - 319
+    # Aaron - simply copy paste to increase additional anchor, we don't care about the content as we are only using
+    #         total number of anchor for the split
+    - - 81
+      - 82
+      - 135
+      - 169
+      - 344
+      - 319
+hn_editor:
+  output_scheme:
+    outputs_to_split:
+    # Aaron - Changed to reflect the conv layer of moovita yolov4-tiny
+    - conv19
+    - conv21
+    - conv24
+    split_output: true
+quantization:
+  should_equalize: false
+  should_finetune: true
+  calib_set:
+  - models_files/coco/2021-06-18/coco_calib2017.tfrecord
+  calib_set_size: 64
+  quantization_batch_size: 8
+  finetune_scheme:
+    loss_factors:
+    - 1.0
+    - 2.0
+    - 0.25
+    - 0.125
+    - 1.0
+    - 2.0
+    - 0.25
+    - 0.125
+    dataset_size: 4000
+    epochs: 8
+    learning_rate: 0.0001
+    loss_types:
+    - l2
+    - l2
+    - l2
+    - l2
+    - l2
+    - l2
+    - l2
+    - l2
+allocation:
+  required_fps: 1385
+network:
+  network_name: tiny_yolov4
+paths:
+  alls_script: tiny_yolov4.alls
+  network_path:
+  # Aaron - Specify the model file to parse
+  - models_files/ObjectDetection/Detection-COCO/yolo/tiny_yolov4_moovita/pretrained/yolov4-9k.onnx
+parser:
+  nodes:
+  # # Aaron - Changed to reflect the conv layer of moovita yolov4-tiny
+  - input
+  - - Conv_58
+    - Conv_272
+    - Conv_486
+evaluation:
+  labels_offset: 1
+  # Aaron - Specify the total class of this network, this is needed for split.
+  classes: 11
+  dataset_name: coco_2017_detection
+  data_set: models_files/coco/2021-06-18/coco_val2017.tfrecord
+  validation_data_set: models_files/coco/2021-06-18/coco_val2017.tfrecord

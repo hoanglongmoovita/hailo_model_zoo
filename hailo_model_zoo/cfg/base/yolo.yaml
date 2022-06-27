@@ -52,7 +52,8 @@ info:
   network_source: https://github.com/ultralytics/yolov5/releases/tag/v2.0
 parser:
   normalization_params:
-    normalize_in_net: true
+    # Aaron - Turn off normalization
+    normalize_in_net: false
     mean_list:
     - 0.0
     - 0.0

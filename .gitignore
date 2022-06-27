@@ -1,0 +1,6 @@
+__pycache__
+*.log
+data/
+*.egg-info
+*.har
+yolov4
