@@ -2,6 +2,24 @@
   <img src="docs/images/logo.svg" />
 </p>  
 
+# Moovita installation instruction
+1. In order to use this repo, you need to use hailo sdk version 3.11 available [here](https://drive.google.com/file/d/1IYQ5MTBTi1zURNNUlWZg6EMXFuZsHT4D/view?usp=sharing). DO NOT USE SDK version 3.13 which is used to compile the networks.
+2. Extract the downloaded sdk. 
+3. `sudo apt install build-essential bison flex libelf-dev dkms cmake`
+4. `cd hailo_sdk`
+5. Check system requirements with `./check_system_requirements.sh`. The result is available in system_reqs_results.log.
+6. `./install.sh`
+7. `source hailo_virtualenv/bin/activate` to activate hailo_virtualenv (Do this everytime you need to use the hailo_model_zoo)
+
+# Splitting yolo output
+1. `cd hailo_model_zoo` (root directory)
+2. `pip install -e .` to install dependecies
+3. `mkdir data`
+4. Copy your yolo onnx file to data folder
+5. Under `hailo_model_zoo/cfg/networks/`, there is tiny_yolov4_moovita.yaml file with configures the splitting process. You should create a new configuration file with tiny_yolov4_moovita.yaml as reference. The new configuration file must be inside `hailo_model_zoo/cfg/networks/`. Inside this yaml file, there are comments giving instructions on how to change the parameters. You will also be able to specify the path to your onnx file (the path is relative from the data folder).
+6. `python hailo_model_zoo/main.py parse <yaml file name without extension>` (e.g `python hailo_model_zoo/main.py parse tiny_yolov4_moovita`)
+7. A .har file will be generated. The name of the har file is specified in the .yaml file.
+8. Use this har file for quantization (skip the parsing step).
 
 # Hailo Model Zoo #
 
